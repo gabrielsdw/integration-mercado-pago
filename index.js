@@ -1,8 +1,11 @@
-import { User, Product, MercadoPagoService } from './mercadopago.js'
+import { MercadoPagoService } from './mercadopago.js'
+import { User } from './user.js'
+import { Product } from './product.js';
+
 
 (async () => {
     const product = new Product(1, 'Azeitona', 2, 23.99, 'Azeitona po');
-    const user = new User(1);
+    const user = new User(7);
 
     const mercadoPagoService = new MercadoPagoService();
 

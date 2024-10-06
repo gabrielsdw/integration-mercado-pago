@@ -1,39 +1,33 @@
 import express from 'express'
 import { MercadoPagoService } from './mercadopago.js';
-const app = express();  
 
 const mercadoPagoService = new MercadoPagoService()
 
-
+const app = express();  
 app.use(express.json());
 
-app.get('/api/v1/', (req, res) => {
-    res.send("Tudo ok!")
-})
-
 app.post('/api/v1/payments/webhook/', async (req, res) => {
-    const data = req.body;
+    const body = req.body;
     try {
-        const paymentId = data.data.id
+        const paymentId = body.data.id
         const paymentDetails = await mercadoPagoService.paymentSearch(paymentId)
-    
-        console.log(paymentDetails)    
+        if(!(paymentDetails === null)) {
+            console.log(paymentDetails)
+            if(paymentDetails.status == 'approved') {
+                const metaData = paymentDetails.metadata
+                const user_id = metaData.user_id
+                console.log(user_id)
+            }
+        }
     } 
     catch (error) {
+        res.status(500)
     }
-    
-    // for(let payment of paymentDetails.results) {
-        
-    //     console.log(payment.description)
-    //     console.log(payment.metadata)
-    // }
-
-    res.status(200).json({});
+    res.status(200)
 })
 
-
-const PORT = process.env.PORT || 3000;
+const PORT = 3000
 
 app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
+    console.log(`Servidor rodando na porta ${PORT}`)
 })
